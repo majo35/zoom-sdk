@@ -51,11 +51,18 @@ export default {
     this.ZoomMtg.setZoomJSLib('https://source.zoom.us/1.9.1/lib', '/av')
     this.ZoomMtg.preLoadWasm()
     this.ZoomMtg.prepareJssdk()
-    console.error(this.userName)
+
+    const queryString = window.location.search
+    const urlParams = new URLSearchParams(queryString)
+    const hostId = urlParams.get('hostId') || ''
+    const meetingId = urlParams.get('meetingId') || ''
     this.sendMessage(
       JSON.stringify({
         type: 'HIDE_CALL',
-        data: {}
+        data: {
+          hostId,
+          meetingId
+        }
       })
     )
   },
@@ -114,7 +121,7 @@ export default {
       document.getElementById('zmmtg-root').style.display = 'block'
 
       this.ZoomMtg.init({
-        leaveUrl: this.leaveUrl,
+        leaveUrl: `${this.leaveUrl}?hostId=${meetingData.hostId}&meetingId=${meetingData.meetingNumber}`,
         isSupportAV: true,
         meetingInfo: ['topic', 'host'],
         success: (success) => {
